@@ -1,0 +1,26 @@
+#!/bin/bash
+function check_create_dir {
+  if [ ! -d "./$1" ]; then
+    mkdir "./$1"
+  fi
+}
+
+# Create build environment
+check_create_dir BUILD
+check_create_dir BUILDROOT
+check_create_dir RPMS
+check_create_dir SOURCES
+check_create_dir SPECS
+check_create_dir SRPMS
+
+if [ ! -f './SOURCES/v1.0.1.tar.gz' ]; then
+  wget 'https://github.com/GeoffMontee/tds_fdw/archive/v1.0.1.tar.gz' -O './SOURCES/v1.0.1.tar.gz'
+fi
+
+rpmbuild --define "_topdir `pwd`" -ba 'SPECS/tds_fdw.spec'
+
+if [ $? -eq 0 ]; then
+  echo Your packages are available at $PWD/RPMS.
+else
+  echo There are errors. Check your log.
+fi
