@@ -1,26 +1,92 @@
 #!/bin/bash
-function check_create_dir {
+
+SCRIPT=$(basename ${0})
+MODULE_VER="1.0.2"
+VERSIONS="9.3 9.4"
+
+function help() {
+  echo ""
+  echo "Script to build tds_fdw RPMs"
+  echo ""
+  echo "Syntax: "
+  echo ""
+  echo "${SCRIPT} -p <POSTGRESQL_MAJOR_VERSION>"
+  echo ""
+  echo "Where: "
+  echo "  -p <POSTGRESQL_MAJOR_VERSION> PostgreSQL major version (format X.Y)"
+  echo ""
+  echo "Supported major versions:"
+  for version in ${VERSIONS}; do
+    echo "- $version"
+  done
+  echo ""
+  exit 1
+}
+
+function print_invalid_syntax() {
+  echo "Invalid syntax, use ${SCRIPT} -h"
+}
+
+function check_create_dir() {
   if [ ! -d "./$1" ]; then
     mkdir "./$1"
   fi
 }
 
-# Create build environment
-check_create_dir BUILD
-check_create_dir BUILDROOT
-check_create_dir RPMS
-check_create_dir SOURCES
-check_create_dir SPECS
-check_create_dir SRPMS
+function create_build_env() {
+  check_create_dir BUILD
+  check_create_dir BUILDROOT
+  check_create_dir RPMS
+  check_create_dir SOURCES
+  check_create_dir SPECS
+  check_create_dir SRPMS
+}
 
-if [ ! -f './SOURCES/v1.0.1.tar.gz' ]; then
-  wget 'https://github.com/GeoffMontee/tds_fdw/archive/v1.0.1.tar.gz' -O './SOURCES/v1.0.1.tar.gz'
+function get_sources() {
+  if [ ! -f "./SOURCES/v${1}.tar.gz" ]; then
+    wget "https://github.com/GeoffMontee/tds_fdw/archive/v${1}.tar.gz" -O "./SOURCES/v${1}.tar.gz"
+  fi
+}
+
+function build_rpm() {
+  PG_SVER=$(echo ${1} | tr -d '.')
+  rpmbuild --define "_topdir `pwd`" -ba "SPECS/tds_fdw-${PG_SVER}.spec"
+  return ${?}
+}
+
+# Parse options
+while getopts "p:h" opts; do
+  case "${opts}" in
+    p) PG_VER=${OPTARG} ;;
+    h) help ;;
+    *) print_invalid_syntax
+       exit 1 ;;
+  esac
+done
+shift $((OPTIND-1))
+
+if [ -z "${PG_VER}" ]; then
+  print_invalid_syntax
+  exit 1
+fi
+FOUND='FALSE'
+for tver in ${VERSIONS}; do
+  if [ "${tver}" == "${PG_VER}" ]; then
+    FOUND='TRUE'
+  fi
+done
+if [ "${FOUND}" == 'FALSE' ]; then
+  echo "Invalid PostgreSQL major version"
+  exit 1
 fi
 
-rpmbuild --define "_topdir `pwd`" -ba 'SPECS/tds_fdw.spec'
-
+create_build_env
+get_sources ${MODULE_VER}
+build_rpm ${PG_VER}
 if [ $? -eq 0 ]; then
   echo Your packages are available at $PWD/RPMS.
+  exit 0
 else
   echo There are errors. Check your log.
+  exit 2
 fi
