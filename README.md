@@ -52,8 +52,8 @@ Build the RPMs:
 
 And install:
 
-    rpm -Uvh RPMS/$HOSTTYPE/postgresql-93-tds_fdw-1.0.2-1.*.$HOSTTYPE.rpm for PostgreSQL 9.3
+    rpm -Uvh RPMS/$HOSTTYPE/postgresql-93-tds_fdw-1.0.3-1.*.$HOSTTYPE.rpm for PostgreSQL 9.3
 
     or
 
-    rpm -Uvh RPMS/$HOSTTYPE/postgresql-94-tds_fdw-1.0.2-1.*.$HOSTTYPE.rpm for PostgreSQL 9.4
+    rpm -Uvh RPMS/$HOSTTYPE/postgresql-94-tds_fdw-1.0.3-1.*.$HOSTTYPE.rpm for PostgreSQL 9.4
