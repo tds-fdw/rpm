@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SCRIPT=$(basename ${0})
-MODULE_VER="1.0.3"
+MODULE_VER="1.0.6"
 VERSIONS="9.3 9.4"
 
 function help() {
