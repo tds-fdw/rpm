@@ -35,7 +35,7 @@ PATH=/usr/pgsql-9.4/bin:$PATH make USE_PGXS=1
 rm -rf %{buildroot}
 PATH=/usr/pgsql-9.4/bin:$PATH make USE_PGXS=1 install DESTDIR=%{buildroot}
 mkdir -p %{buildroot}/usr/share/doc/%{name}-%{version}
-mv %{buildroot}/usr/pgsql-9.4/doc/extension/README.tds_fdw.md %{buildroot}/usr/share/doc/%{name}-%{version}/README.md
+mv %{buildroot}/usr/pgsql-9.5/doc/extension/README.tds_fdw.md %{buildroot}/usr/share/doc/%{name}-%{version}/README.md
 rm -rf %{buildroot}/usr/share/doc/pgsql/extension/
 
 %clean
