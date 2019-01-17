@@ -1,8 +1,8 @@
 #!/bin/bash
 
 SCRIPT=$(basename ${0})
-MODULE_VER="1.0.8"
-VERSIONS="9.3 9.4 9.5 9.6"
+MODULE_VER="2.0.0-alpha.2"
+VERSIONS="9.3 9.4 9.5 9.6 10"
 
 function help() {
   echo ""
@@ -44,7 +44,7 @@ function create_build_env() {
 
 function get_sources() {
   if [ ! -f "./SOURCES/v${1}.tar.gz" ]; then
-    wget "https://github.com/GeoffMontee/tds_fdw/archive/v${1}.tar.gz" -O "./SOURCES/v${1}.tar.gz"
+    curl -L "https://github.com/tds-fdw/tds_fdw/archive/v${1}.tar.gz" -o "./SOURCES/v${1}.tar.gz"
   fi
 }
 

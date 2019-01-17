@@ -1,0 +1,165 @@
+#!/bin/bash
+# Language (force it so getopt messages are always in english, as the script)
+LANG=en_EN
+
+# Get script name
+SCRIPT=$(basename ${0})
+
+# Supported distributions
+SUPPORTEDDISTROS='centos6 centos7'
+
+# Supported PostgreSQL major versions
+POSTGRESQLMAJORVERS='9.3 9.4 9.5 9.6 10 11'
+
+# Allocate tty by default
+TTY='-t'
+
+print_info() {
+  echo -e "\033[1;36m[INFO] ${1}\033[0m"
+}
+
+print_error() {
+  echo -e "\033[1;31m[ERROR] ${1}\033[0m"
+}
+
+print_ok() {
+  echo -e "\033[1;32m[INFO] ${1}\033[0m"
+}
+
+print_incorrect_syntax() {
+  print_error "Incorrect syntax. Use ${SCRIPT} -h for help"
+}
+
+print_error_unsupported_distro() {
+  print_error "Unsupported distro. Use ${SCRIPT} -h for help"
+}
+
+print_error_unsupported_nexus_major_ver() {
+  print_error "Unsupported PostgreSQL major version. Use ${SCRIPT} -h for help"
+}
+
+print_help() {
+  echo ""
+  echo "Script to perform tds_fdw-rpm CI"
+  echo ""
+  echo "Syntax: "
+  echo ""
+  echo "${SCRIPT} <ARGUMENTS>"
+  echo ""
+  echo "Mandatory arguments:"
+  echo ""
+  echo " --distro=<$(echo ${1}|tr ' ' '|')>"
+  echo " --postgresql-major-ver=<$(echo ${2}|tr ' ' '|')>"
+  echo ""
+  echo "Optional arguments:"
+  echo ""
+  echo "  --name=<CONTAINER_NAME> Define the container name"
+  echo "                          If undefined, container name will be"
+  echo "                          s3fs-fuse-rpm-<DISTRO>-<TIMESTAMP>"
+  echo "  --remove-on-error If present, remove the container on errors"
+  echo "  --notty           If present, does not allocate a tty for docker"
+  echo ""
+}
+
+remove_container() {
+  docker container rm -f ${1}
+}
+
+exit_error() {
+  if [ ${1} -ne 0 ]; then
+    print_error "An error happened! Check log!"
+    if [ ! -z ${REMOVE_ON_ERROR} ]; then
+      remove_container ${CONTAINER_NAME}
+    fi
+    exit 1
+  fi
+}
+
+docker_run() {
+  if [ ! -z ${3} ]; then
+    local COMMAND_USER="-u ${3}"
+  fi
+  local COMMAND="docker container exec -i ${TTY} ${COMMAND_USER} ${1} ${2}"
+  local RESULT=$(${COMMAND})
+  exit_error ${?}
+  if [ "${RESULT}" != "" ]; then
+    echo "${RESULT}"
+  fi
+}
+
+check_pgver() {
+  local SUPPORTEDPGVER=""
+  for SUPPORTEDPGVER in ${POSTGRESQLMAJORVERS}; do
+    if [ "${POSTGRESQLMAJORVER}" == "${SUPPORTEDPGVER}" ]; then
+      echo "${POSTGRESQLMAJORVER}"
+      return 0
+    fi
+  done
+  echo ""
+  return 1
+}
+
+# read the options
+ARGS=$(getopt -o h --long help,remove-on-error,notty,distro:,postgresql-major-ver:,name: -n "${SCRIPT}" -- "$@")
+if [ $? -ne 0 ];
+then
+  print_incorrect_syntax
+  exit 1
+fi
+eval set -- "${ARGS}"
+
+# extract options and their arguments into variables
+while true ; do
+  case "${1}" in
+    -h|--help)         print_help "${SUPPORTEDDISTROS}" "${POSTGRESQLMAJORVERS}"; exit 1;;
+    --remove-on-error) REMOVE_ON_ERROR="--rm"; shift 1 ;;
+    --notty)           TTY=""; shift 1 ;;
+    --distro)          DISTRO="${2}"; shift 2;;
+    --postgresql-major-ver) POSTGRESQLMAJORVER="${2}"; shift 2;;
+    --name)            CONTAINER_NAME="${2}"; shift 2;;
+    --)                shift ; break ;;
+    *)                 print_incorrect_syntax; exit 1;;
+  esac
+done
+
+# Check distribution
+case "${DISTRO}" in
+  centos6)       DOCKER_IMAGE="tdsfdw/centos6-postgresql:${POSTGRESQLMAJORVER}";;
+  centos7)       DOCKER_IMAGE="tdsfdw/centos7-postgresql:${POSTGRESQLMAJORVER}";;
+  *)             print_error_unsupported_distro
+                 exit 1;;
+esac
+
+# Check PostgreSQL version
+PG_VER="$(check_pgver)"
+if [ "${PG_VER}" == "" ]; then
+  print_error_unknown_unsupported_pgver
+  exit 1
+fi
+export SHORTVER="$(echo ${PG_VER}|tr -d '.')"
+
+# Check name
+if [ -z ${CONTAINER_NAME} ]; then
+  CONTAINER_NAME="tdsfdw-rpm-${DISTRO}-$(date +'%s')"
+fi
+
+# Package name
+PACKAGE_NAME="postgresql-${SHORTVER}-tds_fdw"
+
+print_info "Pulling latest image..."
+docker pull ${DOCKER_IMAGE}
+print_info "Starting container ${CONTAINER_NAME}..."
+docker container run -i ${TTY} ${REMOVE_ON_ERROR} --name "${CONTAINER_NAME}" -v ${PWD}:/tmp/tds_fdw-rpms -w /tmp/tds_fdw-rpms -d ${DOCKER_IMAGE}
+print_info "Cleaning up"
+docker_run "${CONTAINER_NAME}" "./clean" "postgres"
+print_info "Building tds_fdw package..."
+docker_run "${CONTAINER_NAME}" "./tds_fdw-rpm -p ${POSTGRESQLMAJORVER}" "postgres"
+print_info "Installing tds_fdw package..."
+docker_run "${CONTAINER_NAME}" "/bin/rpm -i RPMS/$HOSTTYPE/${PACKAGE_NAME}-*.*.$HOSTTYPE.rpm" "root"
+print_info "Testing RPM removal..."
+docker_run "${CONTAINER_NAME}" "/bin/rpm -e ${PACKAGE_NAME}" "root"
+print_info "Cleaning up"
+docker_run "${CONTAINER_NAME}" "./clean" "postgres"
+print_info "Removing container..."
+remove_container ${CONTAINER_NAME}
+print_ok "Everything is OK"
