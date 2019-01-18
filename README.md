@@ -1,7 +1,7 @@
 tds_fdw
 =======
 
-CentOS/RH/Amazon RPMs for tds_fdw  <https://github.com/GeoffMontee/tds_fdw> and postgresql 9.3.4 or later
+CentOS/RH/Amazon RPMs for tds_fdw  <https://github.com/tds-fdw/tds_fdw> and postgresql 9.3.4 or later
 
 Tested on CentOS 6/7 x86_64. Should work for other RPM base distributions such as openSUSE or Amazon Linux
 
@@ -16,6 +16,7 @@ PostgreSQL versions that the SPEC can support
 * 9.5 >= 9.5.1
 * 9.6 >= 9.6.1
 * 10 >= 10.0
+* 11 >= 11.0
 
 Requirements
 ------------
@@ -32,7 +33,7 @@ And:
 
 * postgresql[version]-devel
 
-Being **[version]** one of: 93, 94, 95, 96 or 10
+Being **[version]** one of: 93, 94, 95, 96, 10 or 11
 
 To install the RPM for PostgreSQL
 
@@ -43,7 +44,7 @@ And:
 * postgresql[version]-server
 * postgresql[version]-libs
 
-Being **[version]** one of: 93, 94, 95, 96 or 10
+Being **[version]** one of: 93, 94, 95, 96, 10 or 11
 
 Building fresh RPMs
 -------------------
@@ -61,10 +62,10 @@ Build the RPMs for with:
 
     ./tds-fdw_rpm -p [version]
 
-Where `[version]` is one of: 9.3, 9.4, 9.5, 9.6 or 10
+Where `[version]` is one of: 9.3, 9.4, 9.5, 9.6, 10 or 11
 
 And install with
 
     rpm -Uvh RPMS/$HOSTTYPE/postgresql-[version]-tds_fdw-*.*.$HOSTTYPE.rpm
 
-Where `[version]` is one of: 9.3, 9.4, 9.5, 9.6 or 10
+Where `[version]` is one of: 9.3, 9.4, 9.5, 9.6, 10 or 11

@@ -1,11 +1,11 @@
 Name:           postgresql-96-tds_fdw
 Version:        2.0.0
-Release:        alpha.2.1%{?dist}
+Release:        alpha.3.1%{?dist}
 Summary:        TDS foreing data wrapper for PostgreSQL 9.6
 
 License:        None
 URL:            https://github.com/tds-fdw/tds_fdw
-Source:         https://github.com/tds-fdw/tds_fdw/archive/v2.0.0-alpha.2.tar.gz
+Source:         https://github.com/tds-fdw/tds_fdw/archive/v2.0.0-alpha.3.tar.gz
 
 Requires:       postgresql96 >= 9.6.1
 Requires:       postgresql96-server >= 9.6.1
@@ -27,7 +27,7 @@ It does not yet support write operations, as added in PostgreSQL 9.3.
 %global debug_package %{nil}
 
 %prep
-%setup -q -n tds_fdw-2.0.0-alpha.2
+%setup -q -n tds_fdw-2.0.0-alpha.3
 
 
 %build
@@ -45,13 +45,16 @@ rm -rf %{buildroot}
 
 %files
 %attr(755, root, root)/usr/pgsql-9.6/lib/tds_fdw.so
-%attr(644, root, root)/usr/pgsql-9.6/share/extension/tds_fdw--2.0.0-alpha.2.sql
+%attr(644, root, root)/usr/pgsql-9.6/share/extension/tds_fdw--2.0.0-alpha.3.sql
 %attr(644, root, root)/usr/pgsql-9.6/share/extension/tds_fdw.control
 %doc /usr/share/doc/%{name}-%{version}/README.md
 
 
 
 %changelog
+
+* Sat Jan 19 2019 Julio Gonzalez Gil <git@juliogonzalez.es> - 2.0.0-alpha.3.1
+- 2.0.0-alpha.3 build from https://github.com/tds-fdw/tds_fdw
 
 * Fri Jan 18 2019 Julio Gonzalez Gil <git@juliogonzalez.es> - 2.0.0-alpha.2.1
 - 2.0.0-alpha.2 build from https://github.com/tds-fdw/tds_fdw
