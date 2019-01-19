@@ -58,6 +58,7 @@ print_help() {
   echo "                          s3fs-fuse-rpm-<DISTRO>-<TIMESTAMP>"
   echo "  --remove-on-error If present, remove the container on errors"
   echo "  --notty           If present, does not allocate a tty for docker"
+  echo "  --nocleanup       If present, do not run the cleanup script before exiting"
   echo ""
 }
 
@@ -100,7 +101,7 @@ check_pgver() {
 }
 
 # read the options
-ARGS=$(getopt -o h --long help,remove-on-error,notty,distro:,postgresql-major-ver:,name: -n "${SCRIPT}" -- "$@")
+ARGS=$(getopt -o h --long help,remove-on-error,notty,nocleanup,distro:,postgresql-major-ver:,name: -n "${SCRIPT}" -- "$@")
 if [ $? -ne 0 ];
 then
   print_incorrect_syntax
@@ -114,6 +115,7 @@ while true ; do
     -h|--help)         print_help "${SUPPORTEDDISTROS}" "${POSTGRESQLMAJORVERS}"; exit 1;;
     --remove-on-error) REMOVE_ON_ERROR="--rm"; shift 1 ;;
     --notty)           TTY=""; shift 1 ;;
+    --nocleanup)       NOCLEANUP="TRUE"; shift ;;
     --distro)          DISTRO="${2}"; shift 2;;
     --postgresql-major-ver) POSTGRESQLMAJORVER="${2}"; shift 2;;
     --name)            CONTAINER_NAME="${2}"; shift 2;;
@@ -158,8 +160,10 @@ print_info "Installing tds_fdw package..."
 docker_run "${CONTAINER_NAME}" "/bin/rpm -i RPMS/$HOSTTYPE/${PACKAGE_NAME}-*.*.$HOSTTYPE.rpm" "root"
 print_info "Testing RPM removal..."
 docker_run "${CONTAINER_NAME}" "/bin/rpm -e ${PACKAGE_NAME}" "root"
-print_info "Cleaning up"
-docker_run "${CONTAINER_NAME}" "./clean" "postgres"
+if [ "${NOCLEANUP}" != "TRUE" ]; then
+  print_info "Cleaning up"
+  docker_run "${CONTAINER_NAME}" "./clean" "postgres"
+fi
 print_info "Removing container..."
 remove_container ${CONTAINER_NAME}
 print_ok "Everything is OK"
