@@ -1,23 +1,23 @@
-Name:           postgresql-11-tds_fdw
+Name:           postgresql-12-tds_fdw
 Version:        2.0.0
 Release:        1%{?dist}
-Summary:        TDS foreing data wrapper for PostgreSQL 11
+Summary:        TDS foreing data wrapper for PostgreSQL 12
 
 License:        None
 URL:            https://github.com/tds-fdw/tds_fdw
 Source:         https://github.com/tds-fdw/tds_fdw/archive/v2.0.0.tar.gz
 
-Provides:       tds_fdw11
+Provides:       tds_fdw12
 
-Requires:       postgresql11 >= 11.0
-Requires:       postgresql11-server >= 11.0
-Requires:       postgresql11-libs >= 11.0
+Requires:       postgresql12 >= 12.0
+Requires:       postgresql12-server >= 12.0
+Requires:       postgresql12-libs >= 12.0
 Requires:       freetds >= 0.91
 
 BuildRequires:  gcc
 BuildRequires:  freetds-devel
 BuildRequires:  make
-BuildRequires:  postgresql11-devel
+BuildRequires:  postgresql12-devel
 %if 0%{?rhel} >= 7
 BuildRequires:  llvm-toolset-7-clang
 BuildRequires:  llvm5.0
@@ -65,14 +65,5 @@ rm -rf %{buildroot}
 
 %changelog
 
-* Sat Jan 19 2019 Julio Gonzalez Gil <git@juliogonzalez.es> - 2.0.0-1
-- 2.0.0 build from https://github.com/tds-fdw/tds_fdw
-
-* Sat Jan 19 2019 Julio Gonzalez Gil <packages@juliogonzalez.es> 2.0.0-alpha.3.2
-- Allow upgrades from official PostgreSQL packages
-
-* Sat Jan 19 2019 Julio Gonzalez Gil <git@juliogonzalez.es> - 2.0.0-alpha.3.1
-- 2.0.0-alpha.3 build from https://github.com/tds-fdw/tds_fdw
-
-* Fri Jan 18 2019 Julio Gonzalez Gil <git@juliogonzalez.es> - 2.0.0-alpha.2.1
-- Initial build of 2.0.0-alpha.2 from https://github.com/tds-fdw/tds_fdw
+* Sat Jan 19 2019 Julio Gonzalez Gil <packages@juliogonzalez.es> 2.0.0-1
+- Initial build of 2.0.0 from https://github.com/tds-fdw/tds_fdw

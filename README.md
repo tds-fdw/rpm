@@ -17,6 +17,7 @@ PostgreSQL versions that the SPEC can support
 * 9.6 >= 9.6.1
 * 10 >= 10.0
 * 11 >= 11.0
+* 12 >= 12.0
 
 Requirements
 ------------
@@ -33,7 +34,7 @@ And:
 
 * postgresql[version]-devel
 
-Being **[version]** one of: 93, 94, 95, 96, 10 or 11
+Being **[version]** one of: 93, 94, 95, 96, 10, 11 or 12
 
 To install the RPM for PostgreSQL
 
@@ -44,7 +45,7 @@ And:
 * postgresql[version]-server
 * postgresql[version]-libs
 
-Being **[version]** one of: 93, 94, 95, 96, 10 or 11
+Being **[version]** one of: 93, 94, 95, 96, 10, 11 or 12
 
 Building fresh RPMs
 -------------------
@@ -62,10 +63,10 @@ Build the RPMs for with:
 
     ./tds-fdw_rpm -p [version]
 
-Where `[version]` is one of: 9.3, 9.4, 9.5, 9.6, 10 or 11
+Where `[version]` is one of: 9.3, 9.4, 9.5, 9.6, 10, 11 or 12
 
 And install with
 
     rpm -Uvh RPMS/$HOSTTYPE/postgresql-[version]-tds_fdw-*.*.$HOSTTYPE.rpm
 
-Where `[version]` is one of: 9.3, 9.4, 9.5, 9.6, 10 or 11
+Where `[version]` is one of: 9.3, 9.4, 9.5, 9.6, 10, 11 or 12
