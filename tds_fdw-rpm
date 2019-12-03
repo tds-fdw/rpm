@@ -1,8 +1,7 @@
 #!/bin/bash -e
 
 SCRIPT=$(basename ${0})
-MODULE_VER="2.0.0-alpha.3"
-VERSIONS="9.3 9.4 9.5 9.6 10 11"
+VERSIONS="9.3 9.4 9.5 9.6 10 11 12"
 
 function help() {
   echo ""
@@ -43,14 +42,21 @@ function create_build_env() {
 }
 
 function get_sources() {
-  if [ ! -f "./SOURCES/v${1}.tar.gz" ]; then
-    curl -L "https://github.com/tds-fdw/tds_fdw/archive/v${1}.tar.gz" -o "./SOURCES/v${1}.tar.gz"
+  if [ ! -f "./SOURCES/${2}" ]; then
+    echo "Downloading ${1} to "./SOURCES/${2}"..."
+    curl -L "${1}" -o "./SOURCES/${2}"
   fi
 }
 
+get_url_source_from_spec() {
+  local VERSION=$(sed -rn 's/Version:\s*(.*)/\1/p' ${1})
+  local URL=$(sed -rn 's/Source:\s*(.*)/\1/p' ${1})
+  echo "$VERSION $URL" >la
+  echo $(echo ${URL}|sed -e "s/%{version}/${VERSION}/g")
+}
+
 function build_rpm() {
-  PG_SVER=$(echo ${1} | tr -d '.')
-  rpmbuild --define "_topdir `pwd`" -ba "SPECS/tds_fdw-${PG_SVER}.spec"
+  rpmbuild --define "_topdir `pwd`" -ba "${1}"
   return ${?}
 }
 
@@ -80,9 +86,17 @@ if [ "${FOUND}" == 'FALSE' ]; then
   exit 1
 fi
 
+echo "### Creating build environment..."
+PG_SVER=$(echo ${PG_VER} | tr -d '.')
+SPEC="SPECS/tds_fdw-${PG_SVER}.spec"
+URL="$(get_url_source_from_spec ${SPEC})"
+TGZ="$(basename ${URL})"
+
 create_build_env
-get_sources ${MODULE_VER}
-build_rpm ${PG_VER}
+echo "### Downloading sources..."
+get_sources ${URL} ${TGZ}
+echo "### Building RPMs..."
+build_rpm ${SPEC}
 if [ $? -eq 0 ]; then
   echo Your packages are available at $PWD/RPMS.
   exit 0
