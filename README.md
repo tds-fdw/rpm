@@ -12,11 +12,13 @@ It does not yet support write operations, as added in PostgreSQL 9.3.
 PostgreSQL versions that the SPEC can support
 ---------------------------------------------
 * 9.3 >= 9.3.4 (EoL and not maintained by tds_fdw upstream anymore)
-* 9.4 >= 9.4.1
+* 9.4 >= 9.4.1 (EoL and not maintained by tds_fdw upstream anymore)
 * 9.5 >= 9.5.1
 * 9.6 >= 9.6.1
 * 10 >= 10.0
 * 11 >= 11.0
+* 12 >= 12.0
+* 13 >= 13.0
 
 Requirements
 ------------
@@ -33,7 +35,7 @@ And:
 
 * postgresql[version]-devel
 
-Being **[version]** one of: 93, 94, 95, 96, 10 or 11
+Being **[version]** one of: 93, 94, 95, 96, 10, 11, 12 or 13
 
 To install the RPM for PostgreSQL
 
@@ -44,7 +46,7 @@ And:
 * postgresql[version]-server
 * postgresql[version]-libs
 
-Being **[version]** one of: 93, 94, 95, 96, 10 or 11
+Being **[version]** one of: 93, 94, 95, 96, 10, 11, 12 or 13
 
 Building fresh RPMs
 -------------------
@@ -62,10 +64,10 @@ Build the RPMs for with:
 
     ./tds-fdw_rpm -p [version]
 
-Where `[version]` is one of: 9.3, 9.4, 9.5, 9.6, 10 or 11
+Where `[version]` is one of: 9.3, 9.4, 9.5, 9.6, 10, 11, 12 or 13
 
 And install with
 
     rpm -Uvh RPMS/$HOSTTYPE/postgresql-[version]-tds_fdw-*.*.$HOSTTYPE.rpm
 
-Where `[version]` is one of: 9.3, 9.4, 9.5, 9.6, 10 or 11
+Where `[version]` is one of: 9.3, 9.4, 9.5, 9.6, 10, 11, 12 or 13

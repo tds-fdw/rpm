@@ -9,7 +9,7 @@ SCRIPT=$(basename ${0})
 SUPPORTEDDISTROS='centos6 centos7'
 
 # Supported PostgreSQL major versions
-POSTGRESQLMAJORVERS='9.3 9.4 9.5 9.6 10 11 12'
+POSTGRESQLMAJORVERS='9.3 9.4 9.5 9.6 10 11 12 13'
 
 # Allocate tty by default
 TTY='-t'
