@@ -12,8 +12,8 @@ cat /etc/os-release
 
 Finally run the following commands, after adapting `PGVER`, `LEAPVER` and `BRANCH`as needed.
 ```
-PGVER=12
-LEAPVER=15.1
+PGVER=15
+LEAPVER=15.4
 BRANCH=master
 PGSVER=$(echo $PGVER|sed -e 's/\.//g')
 zypper ar http://download.opensuse.org/repositories/server:/database:/postgresql/openSUSE_Leap_${LEAPVER}/server:database:postgresql.repo

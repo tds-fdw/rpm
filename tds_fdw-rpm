@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 SCRIPT=$(basename ${0})
-VERSIONS="9.3 9.4 9.5 9.6 10 11 12 13"
+VERSIONS="9.3 9.4 9.5 9.6 10 11 12 13 14 15"
 
 function help() {
   echo ""
@@ -51,7 +51,6 @@ function get_sources() {
 get_url_source_from_spec() {
   local VERSION=$(sed -rn 's/Version:\s*(.*)/\1/p' ${1})
   local URL=$(sed -rn 's/Source:\s*(.*)/\1/p' ${1})
-  echo "$VERSION $URL" >la
   echo $(echo ${URL}|sed -e "s/%{version}/${VERSION}/g")
 }
 
