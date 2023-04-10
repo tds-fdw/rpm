@@ -14,8 +14,8 @@ POSTGRESQLMAJORVERS='9.3 9.4 9.5 9.6 10 11 12 13 14 15'
 # Allocate tty by default
 TTY='-t'
 
-# Use docker by default
-DOCKER='docker'
+# Use podman by default
+CENGINE='podman'
 
 print_info() {
   echo -e "\033[1;36m[INFO] ${1}\033[0m"
@@ -59,7 +59,7 @@ print_help() {
   echo "  --name=<CONTAINER_NAME> Define the container name"
   echo "                          If undefined, container name will be"
   echo "                          s3fs-fuse-rpm-<DISTRO>-<TIMESTAMP>"
-  echo "  --podman          If present, use podman instead of docker"
+  echo "  --docker          If present, use docker instead of podman"
   echo "  --remove-on-error If present, remove the container on errors"
   echo "  --notty           If present, does not allocate a tty for docker"
   echo "  --nocleanup       If present, do not run the cleanup script before exiting"
@@ -67,7 +67,7 @@ print_help() {
 }
 
 remove_container() {
-  ${DOCKER} container rm -f ${1}
+  ${CENGINE} container rm -f ${1}
 }
 
 exit_error() {
@@ -84,7 +84,7 @@ docker_run() {
   if [ ! -z ${3} ]; then
     local COMMAND_USER="-u ${3}"
   fi
-  local COMMAND="${DOCKER} container exec -i ${TTY} ${COMMAND_USER} ${1} ${2}"
+  local COMMAND="${CENGINE} container exec -i ${TTY} ${COMMAND_USER} ${1} ${2}"
   local RESULT=$(${COMMAND})
   exit_error ${?}
   if [ "${RESULT}" != "" ]; then
@@ -105,7 +105,7 @@ check_pgver() {
 }
 
 # read the options
-ARGS=$(getopt -o h --long help,podman,remove-on-error,notty,nocleanup,distro:,postgresql-major-ver:,name: -n "${SCRIPT}" -- "$@")
+ARGS=$(getopt -o h --long help,docker,remove-on-error,notty,nocleanup,distro:,postgresql-major-ver:,name: -n "${SCRIPT}" -- "$@")
 if [ $? -ne 0 ];
 then
   print_incorrect_syntax
@@ -117,7 +117,7 @@ eval set -- "${ARGS}"
 while true ; do
   case "${1}" in
     -h|--help)         print_help "${SUPPORTEDDISTROS}" "${POSTGRESQLMAJORVERS}"; exit 1;;
-    --podman)          DOCKER="podman"; shift 1 ;;
+    --docker)          CENGINE="docker"; shift 1 ;;
     --remove-on-error) REMOVE_ON_ERROR="--rm"; shift 1 ;;
     --notty)           TTY=""; shift 1 ;;
     --nocleanup)       NOCLEANUP="TRUE"; shift ;;
@@ -131,12 +131,18 @@ done
 
 # Check distribution
 case "${DISTRO}" in
-  centos6)       DOCKER_IMAGE="tdsfdw/centos6-postgresql:${POSTGRESQLMAJORVER}";;
-  centos7)       DOCKER_IMAGE="tdsfdw/centos7-postgresql:${POSTGRESQLMAJORVER}";;
-  rockylinux8)   DOCKER_IMAGE="tdsfdw/rockylinux8-postgresql:${POSTGRESQLMAJORVER}";;
+  centos6)       IMAGE="docker.io/tdsfdw/centos6-postgresql:${POSTGRESQLMAJORVER}";;
+  centos7)       IMAGE="docker.io/tdsfdw/centos7-postgresql:${POSTGRESQLMAJORVER}";;
+  rockylinux8)   IMAGE="docker.io/tdsfdw/rockylinux8-postgresql:${POSTGRESQLMAJORVER}";;
   *)             print_error_unsupported_distro
                  exit 1;;
 esac
+
+
+if [ "${CENGINE}" == "podman" ]; then
+  EXTRA_FLAGS="${EXTRA_FLAGS} --userns=keep-id"
+fi
+
 
 # Check PostgreSQL version
 PG_VER="$(check_pgver)"
@@ -155,9 +161,9 @@ fi
 PACKAGE_NAME="postgresql-${SHORTVER}-tds_fdw"
 
 print_info "Pulling latest image..."
-${DOCKER} pull ${DOCKER_IMAGE}
+${CENGINE} pull ${IMAGE}
 print_info "Starting container ${CONTAINER_NAME}..."
-${DOCKER} container run -i ${TTY} ${REMOVE_ON_ERROR} --name "${CONTAINER_NAME}" -v ${PWD}:/tmp/tds_fdw-rpms -w /tmp/tds_fdw-rpms -d ${DOCKER_IMAGE}
+${CENGINE} container run -i ${TTY} ${REMOVE_ON_ERROR} --name "${CONTAINER_NAME}" -v ${PWD}:/tmp/tds_fdw-rpms ${EXTRA_FLAGS} -w /tmp/tds_fdw-rpms -d ${IMAGE}
 print_info "Cleaning up"
 docker_run "${CONTAINER_NAME}" "./clean" "postgres"
 print_info "Building tds_fdw package..."
