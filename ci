@@ -6,10 +6,10 @@ LANG=en_EN
 SCRIPT=$(basename ${0})
 
 # Supported distributions
-SUPPORTEDDISTROS='centos6 centos7 rockylinux8'
+SUPPORTEDDISTROS='centos6 centos7 rockylinux8 opensuseleap15.5'
 
 # Supported PostgreSQL major versions
-POSTGRESQLMAJORVERS='9.3 9.4 9.5 9.6 10 11 12 13 14 15'
+POSTGRESQLMAJORVERS='9.3 9.4 9.5 9.6 10 11 12 13 14 15 16'
 
 # Allocate tty by default
 TTY='-t'
@@ -131,11 +131,12 @@ done
 
 # Check distribution
 case "${DISTRO}" in
-  centos6)       IMAGE="docker.io/tdsfdw/centos6-postgresql:${POSTGRESQLMAJORVER}";;
-  centos7)       IMAGE="docker.io/tdsfdw/centos7-postgresql:${POSTGRESQLMAJORVER}";;
-  rockylinux8)   IMAGE="docker.io/tdsfdw/rockylinux8-postgresql:${POSTGRESQLMAJORVER}";;
-  *)             print_error_unsupported_distro
-                 exit 1;;
+  centos6)          IMAGE="docker.io/tdsfdw/centos6-postgresql:${POSTGRESQLMAJORVER}";;
+  centos7)          IMAGE="docker.io/tdsfdw/centos7-postgresql:${POSTGRESQLMAJORVER}";;
+  rockylinux8)      IMAGE="docker.io/tdsfdw/rockylinux8-postgresql:${POSTGRESQLMAJORVER}";;
+  opensuseleap15.5) IMAGE="docker.io/tdsfdw/opensuseleap15.5-postgresql:${POSTGRESQLMAJORVER}";;
+  *)                print_error_unsupported_distro
+                    exit 1;;
 esac
 
 
