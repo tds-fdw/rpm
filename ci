@@ -11,6 +11,9 @@ SUPPORTEDDISTROS='centos6 centos7 rockylinux8 opensuseleap15.5'
 # Supported PostgreSQL major versions
 POSTGRESQLMAJORVERS='9.3 9.4 9.5 9.6 10 11 12 13 14 15 16'
 
+# Ignored combinations, will exit without errors so the CI does not fail
+IGNOREDCOMBINATIONS="centos7|16"
+
 # Allocate tty by default
 TTY='-t'
 
@@ -152,6 +155,15 @@ if [ "${PG_VER}" == "" ]; then
   exit 1
 fi
 export SHORTVER="$(echo ${PG_VER}|tr -d '.')"
+
+for IGNOREDCOMBINATION in ${IGNOREDCOMBINATIONS}; do
+  IGNOREDDISTRO=$(echo ${IGNOREDCOMBINATION}|cut -d'|' -f1)
+  IGNOREDVER=$(echo ${IGNOREDCOMBINATION}|cut -d'|' -f2)
+  if [ "${IGNOREDDISTRO}" == "${DISTRO}" ] && [ "${IGNOREDVER}" == "${PG_VER}" ]; then
+    echo "${IGNOREDDISTRO} with PostgreSQL ${IGNOREDVER} is not available"
+    exit 0
+  fi
+done
 
 # Check name
 if [ -z ${CONTAINER_NAME} ]; then
