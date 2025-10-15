@@ -6,7 +6,7 @@ LANG=en_EN
 SCRIPT=$(basename ${0})
 
 # Supported distributions
-SUPPORTEDDISTROS='centos6 centos7 rockylinux8 opensuseleap15.5'
+SUPPORTEDDISTROS='rockylinux8 opensuseleap15.6'
 
 # Supported PostgreSQL major versions
 POSTGRESQLMAJORVERS='9.3 9.4 9.5 9.6 10 11 12 13 14 15 16'
