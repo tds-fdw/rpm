@@ -56,7 +56,7 @@ mv %{buildroot}%{PG_DOC}/README.tds_fdw.md %{buildroot}%{MOD_DOC}/README.md
 %attr(755, root, root)%{PG_LIB}/tds_fdw.so
 %dir %attr(755, root, root)%{PG_DATA}
 %dir %attr(755, root, root)%{PG_DATA}/extension
-%attr(644, root, root)%{PG_DATA}/extension/tds_fdw--%{version}.sql
+%attr(644, root, root)%{PG_DATA}/extension/tds_fdw-*.sql
 %attr(644, root, root)%{PG_DATA}/extension/tds_fdw.control
 %dir %attr(755, root, root)%{MOD_DOC}
 %doc %{MOD_DOC}/README.md
