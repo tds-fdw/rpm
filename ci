@@ -40,7 +40,7 @@ print_error_unsupported_distro() {
   print_error "Unsupported distro. Use ${SCRIPT} -h for help"
 }
 
-print_error_unsupported_nexus_major_ver() {
+print_error_unsupported_pgver() {
   print_error "Unsupported PostgreSQL major version. Use ${SCRIPT} -h for help"
 }
 
@@ -107,6 +107,18 @@ check_pgver() {
   return 1
 }
 
+check_distro() {
+  local SUPPORTEDDISTRO=""
+  for SUPPORTEDDISTRO in ${SUPPORTEDDISTROS}; do
+    if [ "${DISTRO}" == "${SUPPORTEDDISTRO}" ]; then
+      echo "docker.io/tdsfdw/${SUPPORTEDDISTRO}-postgresql"
+      return 0
+    fi
+  done
+  echo ""
+  return 1
+}
+
 # read the options
 ARGS=$(getopt -o h --long help,docker,remove-on-error,notty,nocleanup,distro:,postgresql-major-ver:,name: -n "${SCRIPT}" -- "$@")
 if [ $? -ne 0 ];
@@ -132,29 +144,27 @@ while true ; do
   esac
 done
 
-# Check distribution
-case "${DISTRO}" in
-  centos6)          IMAGE="docker.io/tdsfdw/centos6-postgresql:${POSTGRESQLMAJORVER}";;
-  centos7)          IMAGE="docker.io/tdsfdw/centos7-postgresql:${POSTGRESQLMAJORVER}";;
-  rockylinux8)      IMAGE="docker.io/tdsfdw/rockylinux8-postgresql:${POSTGRESQLMAJORVER}";;
-  opensuseleap15.5) IMAGE="docker.io/tdsfdw/opensuseleap15.5-postgresql:${POSTGRESQLMAJORVER}";;
-  *)                print_error_unsupported_distro
-                    exit 1;;
-esac
-
-
-if [ "${CENGINE}" == "podman" ]; then
-  EXTRA_FLAGS="${EXTRA_FLAGS} --userns=keep-id"
+if [ "${DISTRO}" == "" ] || [ "${POSTGRESQLMAJORVER}" == "" ]; then
+  print_incorrect_syntax
+  exit 1
 fi
-
 
 # Check PostgreSQL version
 PG_VER="$(check_pgver)"
 if [ "${PG_VER}" == "" ]; then
-  print_error_unknown_unsupported_pgver
+  print_error_unsupported_pgver
   exit 1
 fi
 export SHORTVER="$(echo ${PG_VER}|tr -d '.')"
+
+# Check distribution
+IMAGE_BASE="$(check_distro)"
+if [ "${IMAGE_BASE}" == "" ]; then
+  print_error_unsupported_distro
+  exit 1
+else
+  IMAGE="${IMAGE_BASE}:${SHORTVER}"
+fi
 
 for IGNOREDCOMBINATION in ${IGNOREDCOMBINATIONS}; do
   IGNOREDDISTRO=$(echo ${IGNOREDCOMBINATION}|cut -d'|' -f1)
@@ -164,6 +174,10 @@ for IGNOREDCOMBINATION in ${IGNOREDCOMBINATIONS}; do
     exit 0
   fi
 done
+
+if [ "${CENGINE}" == "podman" ]; then
+  EXTRA_FLAGS="${EXTRA_FLAGS} --userns=keep-id"
+fi
 
 # Check name
 if [ -z ${CONTAINER_NAME} ]; then
