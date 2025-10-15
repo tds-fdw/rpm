@@ -173,7 +173,7 @@ for IGNOREDCOMBINATION in ${IGNOREDCOMBINATIONS}; do
 done
 
 if [ "${CENGINE}" == "podman" ]; then
-  EXTRA_FLAGS="${EXTRA_FLAGS} --userns=keep-id"
+  EXTRA_FLAGS="${EXTRA_FLAGS} --userns=keep-id  --security-opt label=disable"
 fi
 
 # Check name
