@@ -88,11 +88,8 @@ docker_run() {
     local COMMAND_USER="-u ${3}"
   fi
   local COMMAND="${CENGINE} container exec -i ${TTY} ${COMMAND_USER} ${1} ${2}"
-  local RESULT=$(${COMMAND})
+  eval ${COMMAND}
   exit_error ${?}
-  if [ "${RESULT}" != "" ]; then
-    echo "${RESULT}"
-  fi
 }
 
 check_pgver() {
