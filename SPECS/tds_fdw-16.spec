@@ -3,7 +3,7 @@
 
 Name:           postgresql-%{PG_SVER}-tds_fdw
 Version:        2.0.3
-Release:        1%{?dist}
+Release:        0%{?dist}
 Summary:        TDS foreing data wrapper for PostgreSQL %{PG_VER}
 License:        None
 URL:            https://github.com/tds-fdw/tds_fdw
@@ -68,8 +68,9 @@ mv %{buildroot}%{PG_DOC}/README.tds_fdw.md %{buildroot}%{MOD_DOC}/README.md
 %endif
 
 %changelog
-* Thu Oct 16 2025 Julio González Gil <packages@juliogonzalez.es> 2.0.3-1
+* Thu Oct 16 2025 Julio González Gil <packages@juliogonzalez.es> 2.0.5-0
+- 2.0.5 from https://github.com/tds-fdw/tds_fdw
 - Fix build openSUSE
 
 * Fri Dec 22 2023 Julio González Gil <packages@juliogonzalez.es> 2.0.3-0
-- 2.0.3 from https://github.com/tds-fdw/tds_fdw
+- 2.0.4 from https://github.com/tds-fdw/tds_fdw
