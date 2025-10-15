@@ -11,17 +11,19 @@ It does not yet support write operations, as added in PostgreSQL 9.3.
 
 PostgreSQL versions that the SPEC can support
 ---------------------------------------------
-* 9.3 >= 9.3.4 (EoL and not maintained by tds_fdw upstream anymore)
-* 9.4 >= 9.4.1 (EoL and not maintained by tds_fdw upstream anymore)
-* 9.5 >= 9.5.1 (EoL and not maintained by tds_fdw upstream anymore)
-* 9.6 >= 9.6.1 (EoL and not maintained by tds_fdw upstream anymore)
-* 10 >= 10.0 (EoL and not maintained by tds_fdw upstream anymore)
-* 11 >= 11.0 (EoL and not maintained by tds_fdw upstream anymore)
-* 12 >= 12.0
+* 9.3 >= 9.3.4 (EoL and not maintained by tds_fdw upstream anymore, but it should still work)
+* 9.4 >= 9.4.1 (EoL and not maintained by tds_fdw upstream anymore, but it should still work)
+* 9.5 >= 9.5.1 (EoL and not maintained by tds_fdw upstream anymore, but it should still work)
+* 9.6 >= 9.6.1 (EoL and not maintained by tds_fdw upstream anymore, but it should still work)
+* 10 >= 10.0 (EoL and not maintained by tds_fdw upstream anymore, but it should still work)
+* 11 >= 11.0 (EoL and not maintained by tds_fdw upstream anymore, but it should still work)
+* 12 >= 12.0 (EoL and not maintained by tds_fdw upstream anymore, but it should still work)
 * 13 >= 13.0
 * 14 >= 14.0
 * 15 >= 15.0
 * 16 >= 16.0
+* 17 >= 17.0
+* 18 >= 17.0
 
 Requirements
 ------------
@@ -38,7 +40,7 @@ And:
 
 * postgresql[version]-devel
 
-Being **[version]** one of: 93, 94, 95, 96, 10, 11, 12, 13, 14, 15, or 16
+Being **[version]** one of: 93, 94, 95, 96, 10, 11, 12, 13, 14, 15, 16, 17, 18
 
 To install the RPM for PostgreSQL
 
@@ -49,7 +51,7 @@ And:
 * postgresql[version]-server
 * postgresql[version]-libs
 
-Being **[version]** one of: 93, 94, 95, 96, 10, 11, 12, 13, 14, 15 or 16
+Being **[version]** one of: 93, 94, 95, 96, 10, 11, 12, 13, 14, 15, 16, 17, 18
 
 Building fresh RPMs
 -------------------
@@ -67,10 +69,10 @@ Build the RPMs for with:
 
     ./tds-fdw_rpm -p [version]
 
-Where `[version]` is one of: 9.3, 9.4, 9.5, 9.6, 10, 11, 12, 13, 14, 15, or 16
+Where `[version]` is one of: 9.3, 9.4, 9.5, 9.6, 10, 11, 12, 13, 14, 15, 16, 17, 18
 
 And install with
 
     rpm -Uvh RPMS/$HOSTTYPE/postgresql-[version]-tds_fdw-*.*.$HOSTTYPE.rpm
 
-Where `[version]` is one of: 9.3, 9.4, 9.5, 9.6, 10, 11, 12, 13, 14, 15, or 16
+Where `[version]` is one of: 9.3, 9.4, 9.5, 9.6, 10, 11, 12, 13, 14, 15, 16, 17, 18
