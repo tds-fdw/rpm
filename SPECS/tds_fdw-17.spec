@@ -22,26 +22,14 @@ BuildRequires:  gcc
 BuildRequires:  freetds-devel
 BuildRequires:  make
 BuildRequires:  postgresql%{PG_SVER}-devel
-%endif
 
-%if 0%{?suse_version}
-  %define PG_BIN %{_prefix}/lib/postgresql%{PG_SVER}/bin
-  %define PG_LIB %{_prefix}/lib/postgresql%{PG_SVER}/%{_lib}
-  %define PG_DATA %{_datadir}/postgresql%{PG_SVER}
-  %define PG_DOC  %{_docdir}/postgresql%{PG_SVER}/extension
-  %define MOD_DOC %{_docdir}/%{name}
-  %if 0%{?suse_version} >= 1500
-  %define PG_BITCODEDIR %{_prefix}/lib/postgresql%{PG_SVER}/%{_lib}/bitcode
-  %endif
-%else
-  %define PG_BIN %{_prefix}/pgsql-%{PG_VER}/bin
-  %define PG_LIB %{_prefix}/pgsql-%{PG_VER}/lib
-  %define PG_DATA %{_prefix}/pgsql-%{PG_VER}/share
-  %define PG_DOC %{_prefix}/pgsql-%{PG_VER}/doc/extension
-  %define MOD_DOC  %{_docdir}/%{name}
-  %if 0%{?rhel} >= 7
-    %define PG_BITCODEDIR /usr/pgsql-%{PG_VER}/lib/bitcode/
-  %endif
+%define PG_BIN %{_prefix}/pgsql-%{PG_VER}/bin
+%define PG_LIB %{_prefix}/pgsql-%{PG_VER}/lib
+%define PG_DATA %{_prefix}/pgsql-%{PG_VER}/share
+%define PG_DOC %{_prefix}/pgsql-%{PG_VER}/doc/extension
+%define MOD_DOC  %{_docdir}/%{name}
+%if 0%{?rhel} >= 7 || 0%{?suse_version} >= 1500
+  %define PG_BITCODEDIR /usr/pgsql-%{PG_VER}/lib/bitcode/
 %endif
 
 %description
