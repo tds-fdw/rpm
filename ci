@@ -9,7 +9,7 @@ SCRIPT=$(basename ${0})
 SUPPORTEDDISTROS='rockylinux8 opensuseleap15.6'
 
 # Supported PostgreSQL major versions
-POSTGRESQLMAJORVERS='9.3 9.4 9.5 9.6 10 11 12 13 14 15 16'
+POSTGRESQLMAJORVERS='9.3 9.4 9.5 9.6 10 11 12 13 14 15 16 17 18'
 
 # Ignored combinations, will exit without errors so the CI does not fail
 IGNOREDCOMBINATIONS="centos7|16"
@@ -173,7 +173,7 @@ for IGNOREDCOMBINATION in ${IGNOREDCOMBINATIONS}; do
 done
 
 if [ "${CENGINE}" == "podman" ]; then
-  EXTRA_FLAGS="${EXTRA_FLAGS} --userns=keep-id"
+  EXTRA_FLAGS="${EXTRA_FLAGS} --userns=keep-id  --security-opt label=disable"
 fi
 
 # Check name
