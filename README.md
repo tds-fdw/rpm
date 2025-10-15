@@ -3,7 +3,7 @@ tds_fdw
 
 CentOS/RH/Amazon RPMs for tds_fdw  <https://github.com/tds-fdw/tds_fdw> and postgresql 9.3.4 or later
 
-Tested on CentOS 7, Rocky Linux 8 x86_64 and openSUSE Leap 15.5. Should work for other RPM base distributions such as Amazon Linux
+Tested on Rocky Linux 8 x86_64 and openSUSE Leap 15.6. Should work for pretty much any RPM base distributions. Feel free to report problems on the issues, so we can have a look.
 
 tds_fdw is a PostgreSQL foreign data wrapper that can connect to databases that use the Tabular Data Stream (TDS) protocol, such as Sybase databases and Microsoft SQL server.
 
